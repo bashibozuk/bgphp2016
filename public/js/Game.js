@@ -22,11 +22,11 @@ class Game {
     }
     initKeys() {
         var _this = this;
-        document.querySelector('canvas').onkeydown = function (e) {
+        window.onkeydown = function (e) {
             e.preventDefault();
             _this.planeOne.move(e.keyCode, true);
         }
-        document.querySelector('canvas').onkeyup = function (e) {
+        window.onkeyup = function (e) {
             e.preventDefault();
             _this.planeOne.move(e.keyCode, false);
         }

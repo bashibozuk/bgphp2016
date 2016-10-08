@@ -29,7 +29,7 @@ class Plane {
         }
     }
     move(key, value) {
-
+console.log(124);
         switch (key) {
             case Keys.UP:
                 this.moving.up = value;
