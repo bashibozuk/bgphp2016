@@ -2,48 +2,68 @@
  * Created by vasil on 08.10.16.
  */
 
+
 class Game {
-    constructor(ctx) {
+    constructor(ctx, imageLoader) {
         this.ctx = ctx;
+        this.imageLoader = imageLoader;
+        this.imageLoader = imageLoader;
+        this.planeOne = new Plane(this.ctx, 0, 525, imageLoader.getImage('plane'), false);
+        this.planeTwo = new Plane(this.ctx, 0, 0, imageLoader.getImage('plane'), true);
+        this.initKeys();
     }
     start() {
-
+        this.drawSky();
+        this.planeOne.draw();
+        this.planeTwo.draw();
     }
-}
-
-class ImageLoader {
-    constructor(images, onLoadFn) {
-        this.images = {};
-        this.loadImages(images);
-        this.onLoadCallback = onLoadFn;
-        this.imagesCount = 0;
+    drawSky() {
+        this.ctx.drawImage(this.imageLoader.getImage('sky'), 0, 0, 1280, 1024, 0, 0, 800, 600);
     }
-    loadImages(images) {
+    initKeys() {
         var _this = this;
-        for (var i in images) {
-            this.images[i] = new Image();
-            this.images[i].src = images[i];
-            this.images.onload = function () {
-                _this.imagesCount--;
-                if (_this.imagesCount <= 0) {
-                    _this.onLoadCallback();
-                }
-            }
+        document.querySelector('canvas').onkeydown = function (e) {
+            e.preventDefault();
+            _this.planeOne.move(e.keyCode, true);
+        }
+        document.querySelector('canvas').onkeyup = function (e) {
+            e.preventDefault();
+            _this.planeOne.move(e.keyCode, false);
         }
     }
-
-
+    
+    loop() {
+        this.planeOne.doMovement()
+        this.redraw()
+    }
+    redraw() {
+        this.ctx.clearRect(0, 0, 800, 600);
+        this.start();
+    }
 }
+
+
+
 
 
 (function(canvasContext) {
-    var game = new Game(canvasContext);
-    var imageLoader = new ImageLoader({
-        'plane' : '/images/v2.png'
-    }, function () {
+    var game;
+    var onLoad = function () {
         game.start();
-    });
+    };
+    var imageLoader = new ImageLoader({
+        'plane' : '/images/v2_101x75.png',
+        'sky' : '/images/sky.jpg'
+    }, onLoad);
+    game = new Game(canvasContext, imageLoader);
+    function play() {
+        requestAnimationFrame(function () {
+            game.loop();
+            play();
+        })
+    }
+    play();
 
-    
+
 }(document.querySelector('canvas').getContext('2d')));
 
